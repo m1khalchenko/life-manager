@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker-compose run rest ./drop_db.py
+docker-compose stop

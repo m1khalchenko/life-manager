@@ -1,0 +1,36 @@
+version: '3.6'
+
+services:
+  postgres:
+    image: postgres:12
+    container_name: life_manager.postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=manager
+    volumes:
+      - .data:/var/lib/postgresql/data
+    networks:
+      - my_network
+
+  rest:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    command: uvicorn rest.uvicorn_app:app --host 0.0.0.0 --port 8600
+    container_name: life_manager.rest
+    ports:
+      - 8600:8600
+    volumes:
+      - ./api:/usr/src/api
+    depends_on:
+      - postgres
+    env_file: .env-dev
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
